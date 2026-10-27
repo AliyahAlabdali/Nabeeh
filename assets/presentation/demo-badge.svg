@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="222" height="34" viewBox="0 0 222 34" role="img" aria-label="LIVE DEMO: TRY NABEEH"><rect width="222" height="34" rx="4" fill="#B31B67"/><path d="M4 0 H100 V34 H4 Q0 34 0 30 V4 Q0 0 4 0" fill="#303441"/><text x="50.0" y="22" fill="#FFFFFF" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="600">LIVE DEMO</text><text x="161.0" y="22" fill="#FFFFFF" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700">TRY NABEEH</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="210" height="32" viewBox="0 0 210 32" role="img" aria-label="LIVE DEMO TRY NABEEH">
+<rect x="3" y="3" width="204" height="26" rx="5" fill="#252A36"/>
+<path d="M86 3 H202 Q207 3 207 8 V24 Q207 29 202 29 H86 Z" fill="#B81765"/>
+<text x="44.5" y="19.1" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#F7F8FA">LIVE DEMO</text>
+<text x="146.5" y="19.1" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#FFFFFF">TRY NABEEH</text>
+</svg>

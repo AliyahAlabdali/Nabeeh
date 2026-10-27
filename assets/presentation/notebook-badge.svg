@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="229" height="34" viewBox="0 0 229 34" role="img" aria-label="NOTEBOOK: VIEW SOURCE"><rect width="229" height="34" rx="4" fill="#555074"/><path d="M4 0 H105 V34 H4 Q0 34 0 30 V4 Q0 0 4 0" fill="#303441"/><text x="52.5" y="22" fill="#FFFFFF" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="600">NOTEBOOK</text><text x="167.0" y="22" fill="#FFFFFF" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700">VIEW SOURCE</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="207" height="32" viewBox="0 0 207 32" role="img" aria-label="NOTEBOOK VIEW SOURCE">
+<rect x="3" y="3" width="201" height="26" rx="5" fill="#252A36"/>
+<path d="M94 3 H199 Q204 3 204 8 V24 Q204 29 199 29 H94 Z" fill="#6F334F"/>
+<text x="48.5" y="19.1" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#F7F8FA">NOTEBOOK</text>
+<text x="149.0" y="19.1" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#FFFFFF">VIEW SOURCE</text>
+</svg>
