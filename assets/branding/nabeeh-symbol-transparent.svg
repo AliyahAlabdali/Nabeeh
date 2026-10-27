@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="brand-title brand-desc">
+<title id="brand-title">Nabeeh SMS detection symbol</title>
+<desc id="brand-desc">Approved Nabeeh identity. Original Arabic and English wordmark contours, approved lowercase a, and an SMS containing a pink selected phrase. All artwork uses native paths, strokes, and solid fills; no fonts or embedded raster images.</desc>
+<g id="symbol-only-placement" transform="translate(60.36 72.42) scale(1.34)"><g id="sms-detection-symbol" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path id="unchanged-message-outline" d="M 53 32 H 242 C 257.464 32 270 44.536 270 60 V 177 C 270 192.464 257.464 205 242 205 H 73 L 22 236 V 63 C 22 45.879 35.879 32 53 32 Z" stroke="#626A82" stroke-width="14" />
+<g id="unchanged-message-lines" stroke="#80879D" stroke-width="14"><path d="M 62 76 H 224" /><path d="M 62 119 H 96" /><path d="M 62 162 H 191" /></g>
+<g id="suspicious-phrase-selection" stroke="#FF3B8D">
+<path id="highlighted-phrase" d="M 136 119 H 215" stroke-width="14" />
+<path id="selection-corners" d="M 130 102 H 122 V 110 M 122 128 V 136 H 130 M 221 102 H 229 V 110 M 229 128 V 136 H 221" stroke-width="4" />
+</g>
+</g></g>
+</svg>
