@@ -1,3 +1,4 @@
+
 <h1 align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/branding/nabeeh-logo-transparent.svg?v=2">
@@ -6,17 +7,58 @@
   </picture>
 </h1>
 
-<p align="center">English SMS scam detection with a Transformer encoder built from scratch in PyTorch.</p>
-
 <p align="center">
-  <a href="https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector"><strong>Try the live demo</strong></a>
+  English SMS scam detection with a Transformer encoder built from scratch in PyTorch.
 </p>
 
 <p align="center">
-  <sub><a href="https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb">Explore in Colab</a> · <a href="SMS_Scam_Detection_Transformer.ipynb">Read the notebook</a></sub>
+  <a href="https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector"><img src="assets/presentation/demo-badge.svg?v=3" alt="Try Nabeeh live demo" height="28"></a><a href="https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb"><img src="assets/presentation/colab-badge.svg?v=3" alt="Open in Google Colab" height="28"></a><a href="SMS_Scam_Detection_Transformer.ipynb"><img src="assets/presentation/notebook-badge.svg?v=3" alt="View notebook source" height="28"></a>
 </p>
 
-[Message analysis](#read-a-message) · [Evaluation](#evaluation-record) · [Errors](#error-analysis) · [Model](#from-message-to-decision) · [Run it](#run-nabeeh)
+<h3 align="center">Explore Nabeeh</h3>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="assets/presentation/toc-01.svg?v=3" width="40" alt="01">
+    </td>
+    <td>
+      <a href="#read-a-message"><strong>Message analysis</strong></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/presentation/toc-02.svg?v=3" width="40" alt="02">
+    </td>
+    <td>
+      <a href="#evaluation-record"><strong>Evaluation record</strong></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/presentation/toc-03.svg?v=3" width="40" alt="03">
+    </td>
+    <td>
+      <a href="#error-analysis"><strong>Error analysis</strong></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/presentation/toc-04.svg?v=3" width="40" alt="04">
+    </td>
+    <td>
+      <a href="#from-message-to-decision"><strong>Model architecture</strong></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/presentation/toc-05.svg?v=3" width="40" alt="05">
+    </td>
+    <td>
+      <a href="#run-nabeeh"><strong>Run Nabeeh</strong></a>
+    </td>
+  </tr>
+</table>
 
 ## Read a message
 
@@ -206,7 +248,10 @@ Further experiments include a TF-IDF and logistic-regression baseline, subword t
 Dataset: Almeida, T. and Hidalgo, J. (2011). *SMS Spam Collection*. [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/228/sms+spam+collection), [DOI: 10.24432/C5CC84](https://doi.org/10.24432/C5CC84). Distributed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 The implementation uses PyTorch, NumPy, pandas, scikit-learn, Matplotlib, and KaggleHub. The live interface uses Gradio.
-
 <br>
 
-<p><em>Built with a lot of attention by <strong>Aliyah Alabdali.</strong></em></p>
+<hr>
+
+<p align="center">
+  <em>Built with a lot of attention by <strong>Aliyah Alabdali.</strong></em>
+</p>
