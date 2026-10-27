@@ -2,80 +2,54 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/branding/nabeeh-logo-transparent.svg?v=2">
     <source media="(prefers-color-scheme: light)" srcset="assets/branding/nabeeh-logo-light.svg?v=2">
-    <img src="assets/branding/nabeeh-logo-light.svg?v=2" width="560" alt="نَبيه | Nabeeh">
+    <img src="assets/branding/nabeeh-logo-light.svg?v=2" width="420" alt="نَبيه | Nabeeh">
   </picture>
 </h1>
 
-<p align="center">SMS spam detection with a Transformer encoder built from scratch in PyTorch.</p>
+<p align="center">English SMS scam detection with a Transformer encoder built from scratch in PyTorch.</p>
 
 <p align="center">
-  <a href="https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector">Live demo</a> ·
-  <a href="SMS_Scam_Detection_Transformer.ipynb">Training notebook</a> ·
-  <a href="https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb">Open in Colab</a>
+  <a href="https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector"><strong>Try the live demo</strong></a>
 </p>
 
-Nabeeh classifies English SMS messages as `legit` or `scam`. The project implements scaled dot-product attention, multi-head attention, and a pre-LayerNorm encoder directly in PyTorch, without `nn.Transformer` or pretrained language-model weights. The notebook covers component tests, data preparation, training, evaluation, and inference.
+<p align="center">
+  <sub><a href="https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb">Explore in Colab</a> · <a href="SMS_Scam_Detection_Transformer.ipynb">Read the notebook</a></sub>
+</p>
 
-[How it works](#how-it-works) · [Results](#results) · [Dataset](#dataset) · [Run the notebook](#run-the-notebook)
+[Message analysis](#read-a-message) · [Evaluation](#evaluation-record) · [Errors](#error-analysis) · [Model](#from-message-to-decision) · [Run it](#run-nabeeh)
 
-## Demo
+## Read a message
 
-[Try the Hugging Face Space](https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector) to classify a message, inspect its class probabilities, and see word-level influence.
+Paste an English SMS into the [Hugging Face Space](https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector) to inspect its class probabilities and word-level influence.
 
 <p align="center">
   <a href="https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector">
-    <img src="assets/scam-detector-demo.gif" width="720" alt="Existing SMS detector interface showing a message, prediction probabilities, and word influence">
+    <img src="assets/scam-detector-demo.gif" width="760" alt="The existing Nabeeh demo classifies an SMS and displays probabilities and token influence">
   </a>
 </p>
 
-The demo estimates influence by masking one normalized token at a time and measuring the change in `p(scam)`. Red indicates a positive contribution to the scam score; blue indicates a negative contribution. These are token-occlusion scores, not attention weights or causal explanations.
+The influence view masks one normalized token at a time and measures the change in `p(scam)`. Red supports the scam score; blue reduces it. This is a sensitivity estimate, not an attention map or causal explanation.
 
-## How it works
+## Evaluation record
 
-```mermaid
----
-config:
-  markdownAutoWrap: false
-  flowchart:
-    htmlLabels: false
-    rankSpacing: 24
----
-flowchart TD
-    A["English SMS"] --> B["Normalize, tokenize, and pad"]
-    B --> C["Token + learned position embeddings"]
-    C --> D["Custom Transformer encoder"]
-    D --> E["Final LayerNorm + masked mean pooling"]
-    E --> F["Linear classifier: legit / scam"]
-    classDef encoder fill:#fce7f1,stroke:#c8296e,stroke-width:2px,color:#192133;
-    class D encoder;
-```
+These are the saved notebook results for the two-head baseline on 517 held-out messages, using the checkpoint selected by validation macro-F1.
 
-The encoder applies layer normalization before each attention and feed-forward sublayer, with residual connections and dropout. Padding is masked in attention and excluded from pooling. The implementation includes checks for tensor shapes, softmax normalization, padding-mask behavior, and gradient flow.
+<p align="center">
+  <picture>
+    <source media="(max-width: 640px)" srcset="assets/presentation/evaluation-mobile.svg">
+    <img src="assets/presentation/evaluation.svg" width="840" alt="Held-out test results: accuracy 98.07%, macro-F1 0.9542, macro precision 0.9743, and macro recall 0.9362. There are 507 correct predictions and 10 errors among 517 messages.">
+  </picture>
+</p>
 
-### Preprocessing
+<details>
+<summary>Exact scores and per-class support</summary>
 
-- Lowercase text and replace URLs, email addresses, currency amounts, phone numbers, and remaining numbers with `<url>`, `<email>`, `<curr>`, `<phone>`, and `<num>`.
-- Remove punctuation and non-Latin characters, then split on whitespace. Inputs with no remaining tokens receive `<UNK>`.
-- Build the vocabulary from training messages only, keeping tokens seen at least twice. Pad or truncate sequences to a length derived from the training set's 95th percentile, clipped to 32–80 tokens.
+- Accuracy: **98.07%**
+- Macro-F1: **0.9542**
+- Macro precision: **0.9743**
+- Macro recall: **0.9362**
 
-### Model and training
-
-The recorded baseline uses one encoder block with `d_model=64`, two attention heads, a feed-forward width of 128, and dropout of 0.1. The training vocabulary contains 3,142 entries; the sequence length is 33 tokens.
-
-Training runs for 15 epochs with Adam, a learning rate of `1e-3`, and batches of 64. Inverse-frequency class weights are used in cross-entropy loss, and gradients are clipped to a norm of 1.0. The checkpoint with the highest validation macro-F1 is restored before test evaluation. The notebook sets random seeds to 42 and configures deterministic cuDNN behavior.
-
-## Results
-
-The saved notebook outputs report the following results on 517 held-out test messages. Scores are rounded to four decimal places.
-
-| Metric | Test score |
-| --- | ---: |
-| Accuracy | 98.07% |
-| Macro precision | 0.9743 |
-| Macro recall | 0.9362 |
-| Macro-F1 | 0.9542 |
-
-Per-class scores, with test-message counts in parentheses:
+Test-message counts appear in the column headings.
 
 | Metric | `legit` (452) | `scam` (65) |
 | --- | ---: | ---: |
@@ -83,85 +57,118 @@ Per-class scores, with test-message counts in parentheses:
 | Recall | 0.9956 | 0.8769 |
 | F1 | 0.9890 | 0.9194 |
 
-<p align="center">
-  <a href="assets/confusion_matrix.png"><img src="assets/confusion_matrix.png" width="360" alt="Test confusion matrix: 450 legitimate messages correct, 2 false alarms, 8 missed spam messages, and 57 spam messages correct"></a>
-</p>
-
-The model makes 10 errors: two false alarms and eight missed spam messages. Scam recall is lower than precision, so the aggregate accuracy should be read alongside the minority-class results. These measurements describe this benchmark split, not performance on all contemporary phishing messages.
-
-<details>
-<summary>Training and validation diagnostics</summary>
-
-Validation loss begins rising after the early epochs while macro-F1 continues to improve. Checkpoint selection uses validation macro-F1 rather than the final epoch or the minimum validation loss.
-
-<p align="center">
-  <a href="assets/training_loss.png"><img src="assets/training_loss.png" width="560" alt="Training and validation loss over 15 epochs"></a>
-</p>
-
-<p align="center">
-  <a href="assets/val_vs_test.png"><img src="assets/val_vs_test.png" width="720" alt="Validation and test accuracy, macro precision, macro recall, and macro-F1"></a>
-</p>
-
-[View all four validation-metric curves at full resolution](assets/val_metrics.png).
+The displayed values match the saved classification report. No new evaluation run is claimed.
 
 </details>
 
-### Attention-head comparison
+### Error analysis
 
-The notebook retrains the model with four heads using the same split and training settings. Both runs produce the same rounded test metrics.
+<p align="center">
+  <picture>
+    <source media="(max-width: 640px)" srcset="assets/presentation/error-analysis-mobile.svg">
+    <img src="assets/presentation/error-analysis.svg" width="840" alt="Error analysis. True rows and predicted columns are Legit, Scam. Confusion matrix: 450 and 2 in the Legit row; 8 and 57 in the Scam row. Two false positives, eight false negatives, and spam-class recall of 0.8769.">
+  </picture>
+</p>
 
-| Attention heads | Accuracy | Macro-F1 |
+Eight of the 65 spam-class messages were predicted as legitimate. This gap in minority-class recall remains important alongside the 98.07% overall accuracy. [View the original confusion matrix](assets/confusion_matrix.png).
+
+<details>
+<summary>Learning traces and validation diagnostics</summary>
+
+<p align="center">
+  <picture>
+    <source media="(max-width: 640px)" srcset="assets/presentation/learning-mobile.svg">
+    <img src="assets/presentation/learning.svg" width="840" alt="Saved learning traces: baseline training and validation loss across 15 epochs, plus validation macro-F1 for two and four attention heads. Circled points mark each run's maximum validation macro-F1.">
+  </picture>
+</p>
+
+The baseline's validation loss rises after the early epochs while macro-F1 continues to improve. Checkpoints are selected by macro-F1, not minimum loss. The curves above redraw the four-decimal epoch logs without adding new measurements.
+
+Original figures: [baseline loss](assets/training_loss.png) · [validation metrics](assets/val_metrics.png) · [validation versus test](assets/val_vs_test.png).
+
+</details>
+
+<details>
+<summary>Two versus four attention heads</summary>
+
+The same split and training settings are used for both runs.
+
+| Metric | 2 heads | 4 heads |
 | --- | ---: | ---: |
-| 2, baseline | 0.9807 | 0.9542 |
-| 4, comparison | 0.9807 | 0.9542 |
+| Test accuracy | 0.9807 | 0.9807 |
+| Test macro precision | 0.9743 | 0.9743 |
+| Test macro recall | 0.9362 | 0.9362 |
+| Test macro-F1 | 0.9542 | 0.9542 |
+| Best validation macro-F1 | 0.9686 | 0.9681 |
 
-This comparison did not show an improvement from four heads. At a fixed model width of 64, changing the head count changes how the projections are partitioned; it does not increase the number of trainable projection parameters. A single comparison does not establish that the configurations are equivalent across seeds or datasets.
+There is no test-score improvement in this comparison. With `d_model=64` fixed, changing the head count repartitions the projection dimensions without adding trainable projection parameters. This single comparison does not establish equivalence across seeds or datasets.
 
-<details>
-<summary>Compare the two training runs</summary>
-
-<p align="center">
-  <a href="assets/ablation_loss.png"><img src="assets/ablation_loss.png" width="720" alt="Training and validation loss for the two-head and four-head models"></a>
-</p>
+[Original attention-head loss comparison](assets/ablation_loss.png).
 
 </details>
 
-## Dataset
+## From message to decision
 
-The notebook downloads the [Kaggle mirror](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) of the [UCI SMS Spam Collection](https://archive.ics.uci.edu/dataset/228/sms+spam+collection). The recorded input has 5,572 rows. After removing missing values and duplicate message texts, 5,169 messages remain: 4,516 legitimate messages and 653 spam messages, or 12.6% spam.
+Attention, head projections, and the pre-LayerNorm encoder are implemented directly in PyTorch. The model is trained from random initialization, without `nn.Transformer` or pretrained language-model weights.
 
-The original labels are `ham` and `spam`. The project maps them to `legit` and `scam`; the latter is a spam-class label, not a verified fraud annotation for every message.
+<p align="center">
+  <picture>
+    <source media="(max-width: 640px)" srcset="assets/presentation/pipeline-mobile.svg">
+    <img src="assets/presentation/pipeline.svg" width="840" alt="A notebook SMS example is normalized into tokens, embedded with learned positions, processed by one custom pre-LayerNorm encoder, pooled over valid tokens, and classified as legit or scam.">
+  </picture>
+</p>
 
-Duplicates are removed before a stratified split. The vocabulary and sequence length are fitted using the training partition only.
-
-| Partition | Messages |
-| --- | ---: |
-| Training | 4,135 |
-| Validation | 517 |
-| Test | 517 |
+The highlighted fields illustrate the notebook's preprocessing example. They do not represent a prediction or measured word influence.
 
 <details>
-<summary>Class balance and vocabulary</summary>
+<summary>Encoder, training, and implementation checks</summary>
 
-<p align="center">
-  <a href="assets/class_distribution.png"><img src="assets/class_distribution.png" width="360" alt="Class distribution: 4,516 legitimate messages and 653 spam messages"></a>
-</p>
+**Configuration.** One encoder block, 64-dimensional embeddings, two attention heads, a feed-forward width of 128, and dropout of 0.1. The recorded vocabulary has 3,142 entries and sequences contain up to 33 tokens.
 
-<p align="center">
-  <a href="assets/top_words.png"><img src="assets/top_words.png" width="720" alt="Most frequent normalized tokens in legitimate and spam messages"></a>
-</p>
+**Attention and readout.** Scaled dot-product attention computes `softmax(QKᵀ / √dₖ)V` after applying the padding mask. Multi-head outputs are concatenated and projected. Each encoder sublayer uses pre-LayerNorm, dropout, and a residual connection. A final LayerNorm and masked mean pool feed the linear classifier.
+
+**Training.** Adam, learning rate `1e-3`, batch size 64, and 15 epochs. Cross-entropy uses inverse-frequency class weights; gradients are clipped to a norm of 1.0. The best validation macro-F1 checkpoint is restored before test evaluation. Seeds are set to 42, with deterministic cuDNN settings.
+
+**Checks.** The notebook tests tensor shapes, softmax normalization, padding-mask behavior, and gradient flow before training. The recorded test outputs remain available in the [notebook](SMS_Scam_Detection_Transformer.ipynb).
 
 </details>
 
-## Run the notebook
+## The training corpus
 
-### Google Colab
+The notebook loads 5,572 rows from the [Kaggle mirror](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) of the UCI SMS Spam Collection. Missing values and duplicate message texts are removed before splitting.
 
-Open the [notebook in Colab](https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb), optionally select a T4 GPU under **Runtime > Change runtime type**, and run the cells in order. The notebook downloads the dataset and trains the model. A CPU is also supported by the device-selection logic.
+<p align="center">
+  <picture>
+    <source media="(max-width: 640px)" srcset="assets/presentation/dataset-mobile.svg">
+    <img src="assets/presentation/dataset.svg" width="840" alt="Dataset: 5,169 unique messages, comprising 4,516 ham and 653 spam messages. Stratified partitions contain 4,135 training, 517 validation, and 517 test messages.">
+  </picture>
+</p>
 
-### Local environment
+The original labels map `ham → legit` and `spam → scam`. Here, `scam` is the application's name for the spam class, not a verified fraud annotation for every message.
 
-Use Python 3.10 or newer. Jupyter Notebook is installed explicitly below because it is not listed in `requirements.txt`.
+- **Normalize:** lowercase and replace URLs, email addresses, currency amounts, phone numbers, and remaining numbers with `<url>`, `<email>`, `<curr>`, `<phone>`, and `<num>`.
+- **Tokenize:** remove punctuation and non-Latin characters, then split on whitespace. Empty normalized inputs receive `<UNK>`.
+- **Fit on training data:** keep words seen at least twice. Derive sequence length from the training set's 95th percentile, clipped to 32–80 tokens; the recorded length is 33.
+
+<details>
+<summary>Corpus inspection and figure provenance</summary>
+
+The corpus contains 87.4% legitimate messages and 12.6% spam. Stratification preserves class proportions across the 80/10/10 split. Vocabulary construction and sequence-length selection use only the training partition.
+
+Original figures: [class balance](assets/class_distribution.png) · [most frequent normalized tokens](assets/top_words.png).
+
+The new graphics preserve the recorded counts and metrics. Their [source notes](assets/presentation/FIGURE-SOURCES.md) and [presentation values](assets/presentation/figure-data.json) identify the notebook evidence used.
+
+</details>
+
+## Run Nabeeh
+
+[**Open the notebook in Google Colab**](https://colab.research.google.com/github/AliyahAlabdali/Nabeeh/blob/main/SMS_Scam_Detection_Transformer.ipynb) and run the cells in order. A T4 GPU is optional; device selection also supports CPU execution. The notebook downloads the dataset and trains the model.
+
+<details>
+<summary>Local environment and inference</summary>
+
+Use Python 3.10 or newer. Jupyter Notebook is installed explicitly because it is not included in `requirements.txt`.
 
 ```bash
 git clone https://github.com/AliyahAlabdali/Nabeeh.git
@@ -172,9 +179,7 @@ python -m pip install -r requirements.txt notebook
 python -m notebook SMS_Scam_Detection_Transformer.ipynb
 ```
 
-On Windows PowerShell, replace the activation command with `.venv\Scripts\Activate.ps1`. An internet connection is needed for the first dataset download. Run the notebook from top to bottom so the model definitions, tests, vocabulary, and trained weights are available to later cells.
-
-After training, use the notebook's inference helper:
+On Windows PowerShell, activate the environment with `.venv\Scripts\Activate.ps1`. The first dataset download needs an internet connection. Run the notebook from top to bottom before using its inference helper:
 
 ```python
 predict_messages(
@@ -186,29 +191,22 @@ predict_messages(
 )
 ```
 
-The repository contains the training workflow. The [Hugging Face Space files](https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector/tree/main) contain the deployed app, configuration, vocabulary, and checkpoint.
+The [notebook](SMS_Scam_Detection_Transformer.ipynb) contains the training workflow. The [Space files](https://huggingface.co/spaces/AliyahAlabdali/sms-scam-detector/tree/main) contain the deployed app, vocabulary, configuration, and checkpoint.
 
-## Repository layout
+</details>
 
-```text
-Nabeeh/
-├── SMS_Scam_Detection_Transformer.ipynb
-├── requirements.txt
-├── README.md
-└── assets/
-    ├── branding/           # Approved logos, icons, and brand guide
-    ├── scam-detector-demo.gif
-    └── *.png              # Existing evaluation and data figures
-```
+## Scope
 
-## Scope and further work
+The current tokenizer and evaluation target English SMS. The Arabic name does not imply Arabic-language model support, and one spam benchmark does not establish coverage of all forms of fraud.
 
-The current tokenizer and evaluation target English SMS. The Arabic name is part of the identity; it does not indicate Arabic-language model support. The Space's word-influence display measures sensitivity to masking individual normalized tokens, and should be interpreted in that context.
+Further experiments include a TF-IDF and logistic-regression baseline, subword tokenization, evaluation across seeds, and threshold tuning with precision-recall analysis. These are proposed extensions, not reported results.
 
-Further experiments include a TF-IDF and logistic-regression baseline, subword tokenization for spelling variation, evaluation across multiple seeds, and threshold tuning with precision-recall analysis. These are proposed extensions, not reported results.
+## Sources
 
-## Attribution
+Dataset: Almeida, T. and Hidalgo, J. (2011). *SMS Spam Collection*. [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/228/sms+spam+collection), [DOI: 10.24432/C5CC84](https://doi.org/10.24432/C5CC84). Distributed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
-Created by [Aliyah Alabdali](https://github.com/AliyahAlabdali). The implementation uses PyTorch, NumPy, pandas, scikit-learn, Matplotlib, and KaggleHub; the demo uses Gradio.
+The implementation uses PyTorch, NumPy, pandas, scikit-learn, Matplotlib, and KaggleHub. The live interface uses Gradio.
 
-Dataset: Almeida, T. and Hidalgo, J. (2011). *SMS Spam Collection*. UCI Machine Learning Repository. [DOI: 10.24432/C5CC84](https://doi.org/10.24432/C5CC84). The dataset is distributed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+<br>
+
+<p><em>Built with a lot of attention by <strong>Aliyah Alabdali.</strong></em></p>
