@@ -28,6 +28,12 @@ blend into the page. The light variant changes only the lettering to the
 approved dark color `#0B101B`; the symbol is identical. The light version is
 also the fallback for environments without media-query support.
 
+Both header SVGs also adapt their lettering to the embedding page's color
+scheme. This keeps the wordmark readable when GitHub's manually selected
+theme differs from the operating-system preference used by `<picture>`.
+Only the lettering color changes; all geometry and symbol colors are fixed.
+PNG exports are fixed-color versions for their named theme.
+
 Use `nabeeh-logo-dark` when a fixed dark background is needed. Other transparent
 exports use light lettering and suit dark surfaces. Keep the symbol, internal
 spacing, colors, and bilingual lettering together. Do not retype the names in

@@ -1,8 +1,8 @@
 <h1 align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/nabeeh-logo-transparent.svg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/branding/nabeeh-logo-light.svg">
-    <img src="assets/branding/nabeeh-logo-light.svg" width="560" alt="نَبيه | Nabeeh">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/nabeeh-logo-transparent.svg?v=2">
+    <source media="(prefers-color-scheme: light)" srcset="assets/branding/nabeeh-logo-light.svg?v=2">
+    <img src="assets/branding/nabeeh-logo-light.svg?v=2" width="560" alt="نَبيه | Nabeeh">
   </picture>
 </h1>
 
